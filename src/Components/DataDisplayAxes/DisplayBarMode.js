@@ -7,12 +7,9 @@ const DisplayBarMode = ({
   handleLabelChange,
   valueToShow,
   handleSelectShow,
-  // LabelDisplayMode,
-  // handleDisplayModeChange,
 }) => {
   const [goal, setGoal] = useState(false);
   const [showDataLabels, setShowDataLabels] = useState(false);
-  // const [xAxisLabelDisplayMode, setXAxisLabelDisplayMode] = useState("Show");
 
   const handleGoalChange = (e) => {
     setGoal(e.target.checked);
@@ -22,12 +19,7 @@ const DisplayBarMode = ({
     setShowDataLabels(e.target.checked);
   };
 
-  // const handleXAxisLabelDisplayModeChange = (e) => {
-  //   setXAxisLabelDisplayMode(e.target.value);
-  // };
-
   const barOptions = ["Some", "All"];
-  const auto = ["Hide", "Rotate 45°", "Rotate 90°"];
 
   return (
     <div className="display-section">

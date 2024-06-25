@@ -6,14 +6,12 @@ const Customer = require("../models/customerModel");
 const customerData = require("../src/data1/customer.json");
 const Invoice = require("../models/invoiceModel");
 const invoiceData = require("../src/data1/invoice.json");
-const DisplaySchema = require("../models/displayModel");
-const BarSchema = require("../models/barModel");
 const db = require("../db");
 const { layouts } = require("chart.js");
 const schemas = {
   customers: Customer,
+  invoices: Invoice,
   commonschemas: CommonSchema,
-  displayschema: DisplaySchema,
 };
 
 router.get("/createCustomerTable", async (req, res) => {
@@ -175,31 +173,75 @@ router.post("/saveGraph", async (req, res) => {
   }
 });
 
-router.patch("/updateGraphPositions/:objid/:id", async (req, res) => {
+router.patch("/updateGraphPositions/:_id", async (req, res) => {
   try {
-    const objid = req.params.objid;
-    const id = req.params.id; // Extract the graph id
-    const updatedPosition = req.body.layout; // Extract the updated position data
-    // Fetch the parent object containing multiple graphs using objid
-    const graphObject = await CommonSchema.findOne({ objid });
+    const objid = req.params._id;
+    const updatedGraphs = req.body;
+
+    const graphObject = await CommonSchema.findOne({ _id: objid });
     if (!graphObject) {
       return res.status(404).json({ message: "Parent object not found" });
     }
-    // Find the specific graph within the parent object using id
-    const graphToUpdate = graphObject.graph.find((graph) => graph._id === id);
-    if (!graphToUpdate) {
-      return res.status(404).json({ message: "Graph not found" });
-    }
-    // Update the layout of the graph
-    graphToUpdate.layout = updatedPosition;
+
+    // Update each graph's position in the parent object
+    updatedGraphs.forEach(({ id, x, y, w, h }) => {
+      // Find the specific graph by id in the graphObject's graph array
+      const graphToUpdate = graphObject.graph.find((graph) => graph.id === id);
+      if (graphToUpdate) {
+        graphToUpdate.layout.x = x;
+        graphToUpdate.layout.y = y;
+        graphToUpdate.layout.w = w;
+        graphToUpdate.layout.h = h;
+      }
+    });
+
     // Save the updated parent object
-    await graphObject.save();
-    res.send({ message: "Graph layout updated successfully" });
+    const updatedObject = await graphObject.save();
+
+    res.send({
+      message: "Graph positions updated successfully",
+      updatedObject,
+    });
   } catch (err) {
-    console.error("Error updating graph layout:", err.message);
+    console.error("Error updating graph positions:", err.message);
     res.status(500).send("Internal Server Error");
   }
 });
+
+// router.patch("/updateGraphPositions/:_id", async (req, res) => {
+//   try {
+//     const objid = req.params._id;
+//     const updatedGraphs = req.body;
+//     // console.log("obj", objid);
+//     console.log("updatedGraphs", updatedGraphs);
+//     // Fetch the parent object containing multiple graphs using objid
+//     const graphObject = await CommonSchema.findOne({ _id: objid });
+//     if (!graphObject) {
+//       return res.status(404).json({ message: "Parent object not found" });
+//     }
+//     console.log(graphObject);
+//     // Update each graph's position in the parent object
+//     updatedGraphs.forEach(({ id, x, y, w, h }) => {
+//       const graphToUpdate = graphObject.graph.id(id);
+//       console.log("jjjjjjjjjj", { x, y, w, h });
+//       if (graphToUpdate) {
+//         graphToUpdate.layout = { x, y, w, h };
+//       }
+//     });
+//     console.log("jjbj", graphObject);
+//     graphObject.graph.map((d) => {
+//       console.log("vh", d.layout);
+//     });
+//     const response = await CommonSchema.findByIdAndUpdate(objid, {
+//       graphObject,
+//     });
+
+//     res.send({ message: "Graph positions updated successfully" });
+//   } catch (err) {
+//     console.error("Error updating graph positions:", err.message);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 router.patch("/saveGraph", async (req, res) => {
   const data = req.body;

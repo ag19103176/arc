@@ -43,7 +43,6 @@ function App() {
   const [layout, setLayout] = useState([]);
   const [isDraggable, setIsDraggable] = useState(false);
   const [objid, setObjid] = useState("");
-  // const [position, setPosition] = useState({});
   const [selectPercentage, setSelectPercentage] = useState("");
   const [slicePercentage, setSlicePercentage] = useState("");
   const [goalLine, setGoalLine] = useState(false);
@@ -58,6 +57,7 @@ function App() {
       setGraph(!graph);
     }, val * 60 * 1000);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -71,6 +71,8 @@ function App() {
         setObjid(() => data[0]._id); // TODO
         setDisplayGraph(data[0].graph);
         // console.log(_Objid);
+        const initialLayout = generateLayout(data[0].graph);
+        setLayout(initialLayout);
       } catch (error) {
         console.log("error in app js ", error);
       }
@@ -109,6 +111,7 @@ function App() {
     setGraphEdit(true);
     setLoading(false);
   };
+
   const handleGenerateGraphClick = async () => {
     setLoading(true);
     try {
@@ -129,7 +132,7 @@ function App() {
         chartType: type,
         field1: dim,
         field2: measure,
-        position: layout,
+        layout: layout,
         chartElements: {},
       };
       if (type === "1") {
@@ -197,7 +200,7 @@ function App() {
         chartType: type,
         field1: dim,
         field2: measure,
-        position: layout,
+        layout: layout,
         chartElements: {},
       };
       if (type === "1") {
@@ -308,10 +311,25 @@ function App() {
     setShowModal(false);
   };
 
-  const onLayoutChange = (newLayout, id) => {
+  // const onLayoutChange = (newLayout) => {
+  //   if (!isDraggable) {
+  //     setLayout(newLayout);
+  //     saveLayoutToBackend(newLayout);
+  //     console.log("Layout changed:", layout);
+  //   }
+  // };
+  const onLayoutChange = (newLayout) => {
+    console.log("isDraggable:", isDraggable);
     setLayout(newLayout);
-    saveLayoutToBackend(newLayout, objid, id);
-    console.log("Layout changed:", layout);
+    if (!isDraggable) {
+      // setLayout(newLayout);
+      saveLayoutToBackend(newLayout);
+      console.log("Layout changed:", newLayout);
+    } else {
+      // setLayout(newLayout);
+      // console.log(newLayout);
+      console.log("Layout change ignored due to draggable mode");
+    }
   };
 
   const minWidth = 2;
@@ -332,10 +350,10 @@ function App() {
       maxH: maxHeight,
     }));
   };
-  const saveLayoutToBackend = async (layout, objid, id) => {
+  const saveLayoutToBackend = async (layout) => {
     try {
       const updatedGraphs = layout.map((item) => ({
-        // abc: item.i, // Graph ID
+        id: item.i,
         position: {
           x: item.x,
           y: item.y,
@@ -343,14 +361,11 @@ function App() {
           h: item.h,
         },
       }));
-      // console.log("ssss", objid);
-      // console.log("sseee", id);
-
-      // // Make a PATCH request to your backend API to update graph positions
-      // await axios.patch(
-      //   `http://localhost:8000/api/updateGraphPositions/${objid}`,
-      //   { id: id, updatedGraphs }
-      // );
+      // console.log("abbbb", updatedGraphs);
+      const res = await axios.patch(
+        `http://localhost:8000/api/updateGraphPositions/${objid}`,
+        updatedGraphs
+      );
       console.log("Layout saved:", layout);
     } catch (error) {
       console.error("Error saving layout:", error);
@@ -361,7 +376,11 @@ function App() {
   }, []);
 
   const handleToggleDragDrop = () => {
-    setIsDraggable(!isDraggable);
+    // setIsDraggable(!isDraggable);
+    setIsDraggable((prev) => !prev);
+    if (isDraggable) {
+      saveLayoutToBackend(layout);
+    }
   };
   const handlelegend = (value) => {
     setLegend(value);
@@ -370,7 +389,6 @@ function App() {
     setTotal(value);
   };
   const handleSelectPercentage = (value) => {
-    // console.log("in app handleSelectPercentage", value);
     setSelectPercentage(value);
   };
   const handleslicePercentage = (value) => {
@@ -399,6 +417,7 @@ function App() {
   const handleDisplayChange = (value) => {
     setLabelDisplayMode(value);
   };
+
   return (
     <div className="App">
       {loading && <Loader />}
@@ -427,7 +446,7 @@ function App() {
             <label className="switch">
               <input
                 type="checkbox"
-                onChange={handleToggleDragDrop}
+                onClick={handleToggleDragDrop}
                 checked={isDraggable}
               />
               <span className="slider round"></span>
@@ -483,7 +502,6 @@ function App() {
                           setMea={measure}
                           selectedSource={selectedSource}
                           handlelegend={handlelegend}
-                          // legendedit={legend}
                           handleTotal={handleTotal}
                           setTot={total}
                           setDim={dim}
@@ -499,7 +517,6 @@ function App() {
                           goalValue={goalValue}
                           handleLabel={handleLabel}
                           goalLabel={goalLabel}
-                          // handleShowValue={handleShowValue}
                           handleShow={handleShow}
                           valueToShow={valueToShow}
                           handleDisplayChange={handleDisplayChange}
@@ -569,7 +586,7 @@ function App() {
               {d.chartType === "1" ? (
                 <PieChart data={d} />
               ) : d.chartType === "2" ? (
-                <BarChart data={d.json_data} />
+                <BarChart data={d} />
               ) : d.chartType === "3" ? (
                 <LineChart data={d.json_data} />
               ) : null}

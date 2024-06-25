@@ -14,7 +14,6 @@ const Axes = ({ LabelDisplayMode, handleDisplayModeChange }) => {
   });
 
   const auto = ["Hide", "Show", "Compact", "Rotate45", "Rotate90"];
-  // const [LabelDisplayMode, setLabelDisplayMode] = useState("");
 
   const handleToggleXAxis = (event) => {
     const { name, checked } = event.target;
@@ -53,7 +52,7 @@ const Axes = ({ LabelDisplayMode, handleDisplayModeChange }) => {
       <div className="form-group">
         <h4>X-Axis</h4>
         <div>
-          <label htmlFor="xAxisShowLabel">Show Label</label>
+          <label>Show Label</label>
           <label className="switch">
             <input
               type="checkbox"
