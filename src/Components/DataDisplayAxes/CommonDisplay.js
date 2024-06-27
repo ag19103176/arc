@@ -22,14 +22,18 @@ const DataDisplayComponent = ({
   selectPercentage,
   handleslicePercentage,
   setSlice,
-  handleGoalLine,
-  handleShowDataLabels,
-  handleGoalValue,
-  handleLabel,
-  handleShow,
-  handleDisplayChange,
+  handlegoalLineToggle,
+  setGoal,
+  handlegoalValue,
+  setgoalValue,
+  handlegoalLabel,
+  setGoalLabel,
+  handleShowValues,
+  setshowvalues,
+  handleshowradio,
+  setradioshow,
 }) => {
-  // console.log("setSlice ", setSlice);
+  console.log("setGoal ", setGoal);
   const [mode, setMode] = useState("");
   const [dimensions, setDimensions] = useState([]);
   const [measures, setMeasures] = useState([]);
@@ -101,29 +105,21 @@ const DataDisplayComponent = ({
   const selectSlicePercentage = (value) => {
     handleslicePercentage(value);
   };
-  const handleGoalChange = (value) => {
-    handleGoalLine(value);
-    // console.log("bar", value);
+  const handleGoalLineToggle = (value) => {
+    console.log("hondle show value", value);
+    handlegoalLineToggle(value);
   };
-  const handleCheckboxChange = (value) => {
-    handleShowDataLabels(value);
-    console.log("bar", value);
+  const handleGoalValue = (value) => {
+    handlegoalValue(value);
   };
-  const handleGoalValueChange = (value) => {
-    handleGoalValue(value);
-    console.log("goal", value);
+  const handleGoalLabel = (value) => {
+    handlegoalLabel(value);
   };
-  const handleLabelChange = (value) => {
-    handleLabel(value);
-    console.log("label", value);
+  const handleshowValues = (value) => {
+    handleShowValues(value);
   };
-  const handleSelectShow = (value) => {
-    handleShow(value);
-    console.log("show", value);
-  };
-  const handleDisplayModeChange = (value) => {
-    handleDisplayChange(value);
-    console.log("labemode", value);
+  const handleRadioShowValues = (value) => {
+    handleshowradio(value);
   };
 
   return (
@@ -180,13 +176,16 @@ const DataDisplayComponent = ({
           )}
           {(type === "2" || type === "line") && (
             <DisplayBarModeComponent
-              handleGoalChange={handleGoalChange}
-              handleCheckboxChange={handleCheckboxChange}
-              handleGoalValueChange={handleGoalValueChange}
-              handleLabelChange={handleLabelChange}
-              handleSelectShow={handleSelectShow}
-              handleDisplayModeChange={handleDisplayModeChange}
-              // valueToShow={valueToShow}
+              handleGoalLineToggle={handleGoalLineToggle}
+              setGoal={setGoal}
+              handleGoalValue={handleGoalValue}
+              setgoalValue={setgoalValue}
+              handleGoalLabel={handleGoalLabel}
+              setGoalLabel={setGoalLabel}
+              handleshowValues={handleshowValues}
+              setshowvalues={setshowvalues}
+              handleRadioShowValues={handleRadioShowValues}
+              setradioshow={setradioshow}
             />
           )}
           {(type === "3" || type === "line") && <DisplayBarModeComponent />}

@@ -102,6 +102,7 @@ router.post("/saveGraph", async (req, res) => {
     isDeleted,
     chartSource,
     chartType,
+    json_data,
     field1,
     field2,
     layout,
@@ -109,7 +110,7 @@ router.post("/saveGraph", async (req, res) => {
   } = req.body;
 
   try {
-    const newEntry = new UserAnalyticsCharts({
+    const newEntry = new CommonSchema({
       graph: [
         {
           companyId,
@@ -117,6 +118,7 @@ router.post("/saveGraph", async (req, res) => {
           isDeleted,
           chartSource,
           chartType,
+          json_data,
           field1,
           field2,
           layout,
@@ -125,47 +127,12 @@ router.post("/saveGraph", async (req, res) => {
       ],
     });
 
-    console.log("in save", newEntry);
+    // console.log("in save", newEntry);
+    // console.log("chart ele", newEntry.chartElements);
 
     // Save the new graph entry
     await newEntry.save();
 
-    // Prepare additional configuration based on chartType
-    let additionalConfig = {};
-
-    if (chartType === "1") {
-      // Pie chartType specific configurations
-      additionalConfig = {
-        pieChart: {
-          legend: legend,
-          total: total,
-          selectPercentage: selectPercentage,
-          minimumSlicePercentage: minimumSlicePercentage,
-        },
-      };
-    } else if (chartType === "2") {
-      // Bar chartType specific configurations
-      additionalConfig = {
-        barLineChart: {
-          goalLine: goalLine,
-          goalValue: goalValue,
-          goalLabel: goalLabel,
-          showValues: showValues,
-          valueToShow: valueToShow,
-          LabelDisplayMode: LabelDisplayMode,
-          showLabel: showLabel,
-          label: label,
-          showLineAndMarks: showLineAndMarks,
-          yShowLabel: yShowLabel,
-          yLabel: yLabel,
-          yshowLineAndMarks: yshowLineAndMarks,
-        },
-      };
-    }
-    // Update the chartElements field in the newEntry
-    newEntry.graph[0].chartElements = additionalConfig;
-    // Save the updated newEntry with chartElements
-    await newEntry.save();
     res.send({ msg: "Data saved successfully" });
   } catch (err) {
     console.error("Error in saving graph data: ", err.message);

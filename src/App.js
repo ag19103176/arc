@@ -46,11 +46,11 @@ function App() {
   const [selectPercentage, setSelectPercentage] = useState("");
   const [slicePercentage, setSlicePercentage] = useState("");
   const [goalLine, setGoalLine] = useState(false);
-  const [showValue, setShowValue] = useState(false);
+  const [showValues, setShowValues] = useState(false);
   const [goalValue, setGoalValue] = useState("");
   const [goalLabel, setGoalLabel] = useState("");
-  const [valueToShow, setValueToShow] = useState("");
-  const [LabelDisplayMode, setLabelDisplayMode] = useState(false);
+  const [valueToShow, setRadioshowValues] = useState("");
+  const [LabelDisplayMode, setLabelDisplayMode] = useState("");
 
   const handleRefreshClick = (val) => {
     setTimeout(() => {
@@ -92,20 +92,17 @@ function App() {
     setId(graphData._id);
     if (graphData.chartType === "1") {
       setLegend(graphData.chartElements.pieChart.legend);
+      // console.log("Edit Legend", graphData.chartElements.pieChart.legend);
       setTotal(graphData.chartElements.pieChart.total);
       setSelectPercentage(graphData.chartElements.pieChart.selectPercentage);
       setSlicePercentage(graphData.chartElements.pieChart.minSlicePercentage);
-    } else if (graphData.chartType === "2") {
+    } else {
       setGoalLine(graphData.chartElements.barLineChart.goalLine);
-      setShowValue(graphData.chartElements.barLineChart.showValue);
-      setGoalValue(graphData.chartElements.barLineChart.GoalValue);
-      setGoalLabel(graphData.chartElements.barLineChart.GoalLabel);
-      setValueToShow(graphData.chartElements.barLineChart.valueToShow);
-      setLabelDisplayMode(
-        graphData.chartElements.barLineChart.LabelDisplayMode
-      );
+      setGoalValue(graphData.chartElements.barLineChart.goalValue);
+      setGoalLabel(graphData.chartElements.barLineChart.goalLabel);
+      setShowValues(graphData.chartElements.barLineChart.showValues);
+      setRadioshowValues(graphData.chartElements.barLineChart.valueToShow);
     }
-
     setShowModal(true);
     setAddButton(true);
     setGraphEdit(true);
@@ -126,6 +123,7 @@ function App() {
       const dataLabel = response.data.data.filter(
         (item) => item.label !== null
       );
+      console.log("");
       const requestData = {
         chartSource: selectedSource,
         json_data: dataLabel,
@@ -150,7 +148,7 @@ function App() {
             goalLine: goalLine,
             goalValue: goalValue,
             goalLabel: goalLabel,
-            showValues: showValue,
+            showValues: showValues,
             valueToShow: valueToShow,
             // LabelDisplayMode: LabelDisplayMode,
             showLabel: true,
@@ -218,12 +216,12 @@ function App() {
             goalLine: goalLine,
             goalValue: goalValue,
             goalLabel: goalLabel,
-            showValues: showValue,
+            showValues: showValues,
             valueToShow: valueToShow,
             // LabelDisplayMode: LabelDisplayMode,
             showLabel: true,
             label: "Some Label",
-            LabelDisplayMode: LabelDisplayMode,
+            LabelDisplayMode: "abd",
             yShowLabel: true,
             yLabel: "Y-Axis Label",
             yshowLineAndMarks: true,
@@ -242,12 +240,10 @@ function App() {
       setTotal(false);
       setSelectPercentage("");
       setSlicePercentage("");
-      setGoalLine(false);
-      setShowValue(false);
       setGoalValue("");
+      setShowValues(false);
       setGoalLabel("");
-      setValueToShow("");
-      setLabelDisplayMode("");
+
       setGraph(!graph);
     } catch (error) {
       console.error("Error updating graph:", error.message);
@@ -299,12 +295,12 @@ function App() {
     setSelectPercentage("");
     setSlicePercentage("");
     setGoalLine(false);
-    setShowValue(false);
+    setShowValues(false);
     setLoading(false);
     setGoalValue("");
     setGoalLabel("");
-    setValueToShow("");
-    setLabelDisplayMode("");
+    setRadioshowValues("");
+    // setLabelDisplayMode("");
   };
 
   const handleCancel = () => {
@@ -395,29 +391,23 @@ function App() {
     console.log("in app setSlice", value);
     setSlicePercentage(value);
   };
-  const handleGoalLine = (value) => {
+  const handlegoalLineToggle = (value) => {
+    // console.log("in app", value);
     setGoalLine(value);
   };
-  const handleShowDataLabels = (value) => {
-    setShowValue(value);
-  };
-  const handleGoalValue = (value) => {
+  const handlegoalValue = (value) => {
     setGoalValue(value);
   };
-  const handleLabel = (value) => {
-    console.log("label", value);
+  const handlegoalLabel = (value) => {
     setGoalLabel(value);
   };
-  // const handleShowValue = (value) => {
-  //   setValueToShow(value);
-  // };
-  const handleShow = (value) => {
-    setValueToShow(value);
+  const handleShowValues = (value) => {
+    setShowValues(value);
   };
-  const handleDisplayChange = (value) => {
-    setLabelDisplayMode(value);
+  const handleshowradio = (value) => {
+    // console.log("in app   ", value);
+    setRadioshowValues(value);
   };
-
   return (
     <div className="App">
       {loading && <Loader />}
@@ -509,18 +499,16 @@ function App() {
                           selectPercentage={selectPercentage}
                           handleslicePercentage={handleslicePercentage}
                           setSlice={slicePercentage}
-                          handleGoalLine={handleGoalLine}
-                          goal={goalLine}
-                          handleShowDataLabels={handleShowDataLabels}
-                          showValue={showValue}
-                          handleGoalValue={handleGoalValue}
-                          goalValue={goalValue}
-                          handleLabel={handleLabel}
-                          goalLabel={goalLabel}
-                          handleShow={handleShow}
-                          valueToShow={valueToShow}
-                          handleDisplayChange={handleDisplayChange}
-                          LabelDisplayMode={LabelDisplayMode}
+                          handlegoalLineToggle={handlegoalLineToggle}
+                          setGoal={goalLine}
+                          handlegoalValue={handlegoalValue}
+                          setgoalValue={goalValue}
+                          handlegoalLabel={handlegoalLabel}
+                          setGoalLabel={goalLabel}
+                          handleShowValues={handleShowValues}
+                          setshowvalues={showValues}
+                          handleshowradio={handleshowradio}
+                          setradioshow={valueToShow}
                         />
                       )
                   )}

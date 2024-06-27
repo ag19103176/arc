@@ -1,53 +1,60 @@
-import React, { useState } from "react";
+import React from "react";
 
 const DisplayBarMode = ({
-  handleGoalValueChange,
-  goalValue,
-  goalLabel,
-  handleLabelChange,
-  valueToShow,
-  handleSelectShow,
+  handleGoalLineToggle,
+  setGoal,
+  handleGoalValue,
+  setgoalValue,
+  handleGoalLabel,
+  setGoalLabel,
+  handleshowValues,
+  setshowvalues,
+  handleRadioShowValues,
+  setradioshow,
 }) => {
-  const [goal, setGoal] = useState(false);
-  const [showDataLabels, setShowDataLabels] = useState(false);
-
-  const handleGoalChange = (e) => {
-    setGoal(e.target.checked);
-  };
-
-  const handleCheckboxChange = (e) => {
-    setShowDataLabels(e.target.checked);
-  };
-
-  const barOptions = ["Some", "All"];
-
+  console.log("in dataBar", setGoal);
+  const displayOptions = ["Some", "All"];
   return (
     <div className="display-section">
       <div className="legend">
         <label className="label">Goal Line</label>
         <label className="switch">
-          <input type="checkbox" checked={goal} onChange={handleGoalChange} />
+          <input
+            type="checkbox"
+            checked={setGoal}
+            onChange={(e) => handleGoalLineToggle(e.target.checked)}
+          />
           <span className="slider round"></span>
         </label>
       </div>
 
-      {goal && (
-        <div className="goal-section">
-          <div className="goal-input">
-            <label>Goal Value</label>
-            <input
-              value={goalValue}
-              onChange={(e) => handleGoalValueChange(e.target.value)}
-            />
+      {setGoal && (
+        <>
+          <div>
+            <div>
+              <label>Goal Value</label>
+            </div>
+            <div>
+              <input
+                type="number"
+                value={setgoalValue}
+                onChange={(e) => handleGoalValue(e.target.value)}
+              />
+            </div>
           </div>
-          <div className="goal-input">
-            <label>Goal Label</label>
-            <input
-              value={goalLabel}
-              onChange={(e) => handleLabelChange(e.target.value)}
-            />
+          <div>
+            <div>
+              <label>Goal Label</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                value={setGoalLabel}
+                onChange={(e) => handleGoalLabel(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       <div className="legend">
@@ -55,34 +62,36 @@ const DisplayBarMode = ({
         <label className="switch">
           <input
             type="checkbox"
-            checked={showDataLabels}
-            onChange={handleCheckboxChange}
+            checked={setshowvalues}
+            onChange={(e) => handleshowValues(e.target.checked)}
           />
           <span className="slider round"></span>
         </label>
       </div>
 
-      {showDataLabels && (
-        <div>
+      {setshowvalues && (
+        <>
           <div>
-            <label>Value to Show</label>
             <div>
-              {barOptions.map((option, index) => (
+              <label>Value to Show</label>
+            </div>
+            <div>
+              {displayOptions.map((option, index) => (
                 <div key={index}>
                   <input
                     type="radio"
-                    id={option}
-                    name="barOption"
+                    id={index}
+                    name="displayOption"
                     value={option}
-                    checked={valueToShow === option}
-                    onChange={() => handleSelectShow(option)}
+                    checked={setradioshow === option}
+                    onChange={(e) => handleRadioShowValues(e.target.value)}
                   />
                   <label>{option}</label>
                 </div>
               ))}
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

@@ -48,10 +48,6 @@ const BarLineChartSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    // LabelDisplayMode: {
-    //   type: String,
-    //   default: null,
-    // },
     showLabel: {
       type: Boolean,
       default: false,
@@ -60,7 +56,7 @@ const BarLineChartSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    LabelDisplayMode: {
+    showLineAndMarks: {
       type: String,
       default: null,
     },
